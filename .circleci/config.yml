@@ -48,5 +48,5 @@ jobs:
     #       path: reports/junit
     #   run tests!
       # - run: yarn install
-      - run: yarn test
+      # - run: yarn test
       - run: yarn eslint
