@@ -172,6 +172,22 @@ app.post('/register', (req, res) => {
   });    
 })
 
+app.post('/upload', (req, res) => {
+  let newWallpaper = {_id: new mongoose.Types.ObjectId(), url : req.body.url}
+  Wallpaper.create(newWallpaper, function(err, wallpaper){
+    if(err) console.log(err)
+    else{
+        User.findOneAndUpdate({uid: Uid},
+          {$push: {uploadPics: wallpaper._id.toString()}}, function(err, user){
+            if(err) console.log(err)
+            else {
+              console.log(user)
+              res.send('succussfully upload')
+            }
+          });
+    }
+    })
+})
 
 app.get('/', (req, res) => {
     res.send('hello world');
