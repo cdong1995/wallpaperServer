@@ -53,7 +53,7 @@ jobs:
       - run:
           command: |
             mkdir -p ~/reports
-            yarn eslint --format table --output-file ~/reports/eslint.xml
+            yarn eslint --format junit --output-file ~/reports/eslint.xml
           when: always
       - store_test_results:
           path: ~/reports
