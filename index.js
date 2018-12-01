@@ -1,11 +1,8 @@
-import { toJson } from 'unsplash-js'
-
 const express       =        require("express"),
       app           =        express(),
       bodyParser    =        require("body-parser"),
       mongoose      =        require("mongoose"),
       cloudinary    =        require("cloudinary"),
-      unsplash      =        require("./lib/unsplash"),
       Wallpaper     =        require("./models/wallpaper"),
       User          =        require("./models/user"),
       fetch         =        require("node-fetch"),
@@ -127,17 +124,17 @@ app.get('/wallpapers/upload', (req, res) => {
     })   
 })
 
-app.get('/search', (req, res) => {
-    let keyword = 'dog'
-    unsplash.search.photos(keyword, 1, 20)  
-        .catch(err => {
-            console.log(err);
-        })
-        .then(toJson)
-        .then(json => {
-            res.send(json)
-        });    
-})
+// app.get('/search', (req, res) => {
+//     let keyword = 'dog'
+//     unsplash.search.photos(keyword, 1, 20)  
+//         .catch(err => {
+//             console.log(err);
+//         })
+//         .then(toJson)
+//         .then(json => {
+//             res.send(json)
+//         });    
+// })
 
 app.post('/login', (req, res) => {
   console.log(req.query)
