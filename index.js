@@ -9,8 +9,10 @@ const express       =        require("express"),
       firebase      =        require('firebase'),
       url           =        require("url")
 
-      
-app.use(bodyParser.urlencoded({extended: true}));
+
+app.use(bodyParser.json({limit: '60mb'}));
+app.use(bodyParser.urlencoded({limit: '60mb', extended: true}));
+
 mongoose.connect('mongodb://cdong1995:dc196828zxzqzl@ds125453.mlab.com:25453/wallpaper-ase');
 cloudinary.config({ 
     cloud_name: 'candong', 
@@ -187,6 +189,9 @@ app.post('/register', (req, res) => {
 // })
 
 app.post('/upload', (req, res) => {
+    console.log("Upload Request")
+    console.log(req)
+    console.log(req.body.image)
     cloudinary.uploader.upload(req.body.image, (result) => {
       var image_url = result.secure_url
       console.log("aaaaaaaaaa" + image_url)
