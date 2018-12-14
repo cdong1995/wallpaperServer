@@ -10,6 +10,14 @@ var wallpaperSchema = new mongoose.Schema({
     collects: {
         type:Number,
         default: 0
+    },
+    isLiked: {
+        type: Boolean,
+        default: false
+    },
+    isCollected: {
+        type: Boolean,
+        default: false
     }
 });
 

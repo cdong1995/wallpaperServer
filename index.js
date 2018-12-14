@@ -41,13 +41,41 @@ firebase.auth().onAuthStateChanged(User => {
 var Uid 
 
 app.get('/wallpapers/index', (req, res) => {
-    Wallpaper.find({}, function(err, allWallpapers) {
+  Wallpaper.find({}, function(err, allWallpapers) {
+
+   function A(){
+     return new Promise((resolve, reject) => {
       if(err) console.log(err)
       else {
-          res.send(allWallpapers)
+          console.log("all is"+allWallpapers)
+          User.findOne({uid:Uid}).exec(function(err, likes){
+            if(err) console.log(err)
+            else{
+              for(var i = 0; i < allWallpapers.length; i++) {
+                let isLiked=likes.likePics.some((item)=>{
+                  return item.toString() === allWallpapers[i]._id.toString();})
+                let isCollected=likes.collectPics.some((item)=>{
+                  return item.toString() === allWallpapers[i]._id.toString();})
+                allWallpapers[i]["isLiked"]=isLiked
+                allWallpapers[i]["isCollected"]=isCollected
+                console.log("is collect"+isCollected)
+              }
+            } 
+             resolve();         
+          })        
       }
-    })   
+     }
+
+     )}
+
+     async function init(){
+       await A();
+       res.send(allWallpapers)
+     }
+     init()
+   })   
 })
+
 
 app.get('/wallpapers/likes', (req, res) => {
     User.findOne({uid:Uid}).populate("likePics").exec(function(err, wallpapers){     
@@ -59,7 +87,8 @@ app.get('/wallpapers/likes', (req, res) => {
 })
 
 app.post('/addLike', (req, resp) => {
-  var wid=req.body.wid
+  var wid = req.body.wid
+  var action = req.body.action
   User.findOne({uid: Uid},function(err,res){
     console.log(res.likePics)
     if(res.likePics.indexOf(wid)<0){
@@ -70,21 +99,31 @@ app.post('/addLike', (req, resp) => {
             console.log(Uid + " likes this picture");
           }
         });
-      
-      Wallpaper.findOneAndUpdate({_id: wid},
-        {$inc: {likes: 1}}, function(err, user){
+      }else{
+        User.findOneAndUpdate({uid: Uid},
+          {$pull: {likePics: wid}}, function(err, user){
             if(err) console.log(err)
             else {
+              console.log(Uid + " likes this picture");
+            }
+          });
+      }
+      Wallpaper.findOneAndUpdate({_id: wid},
+        {$inc: {likes: action}}, function(err, user){
+          console.log("action is "+action)
+            if(err) console.log("error is"+err)
+            else {
+              console.log("action is "+action)
               console.log("success")
               resp.send("success")
             }
-        });
-    }  
+        }); 
   });   
 })
 
 app.post('/addCollect', (req, resp) => {
-  var wid=req.body.wid
+  var wid = req.body.wid
+  var action = req.body.action
   User.findOne({uid: Uid},function(err,res){
     console.log(res.collectPics)
     if(res.collectPics.indexOf(wid)<0){
@@ -95,16 +134,25 @@ app.post('/addCollect', (req, resp) => {
             console.log(Uid + " collects this picture");
           }
         });
-      
+    }else{
+      User.findOneAndUpdate({uid: Uid},
+        {$pull: {collectPics: wid}}, function(err, user){
+          if(err) console.log(err)
+          else {
+            console.log(Uid + " collects this picture");
+          }
+        });
+    } 
       Wallpaper.findOneAndUpdate({_id: wid},
-        {$inc: {collects: 1}}, function(err, user){
+        {$inc: {collects: action}}, function(err, user){
+          console.log("wwwwwww"+action)
             if(err) console.log(err)
             else {
               console.log("success")
               resp.send("success")
             }
         });
-    }  
+      
   });   
 })
 
