@@ -224,12 +224,38 @@ app.get('/wallpapers/collections', (req, res) => {
 })
 
 app.get('/wallpapers/upload', (req, res) => {
-    User.findOne({uid:Uid}).populate("uploadPics").exec(function(err, wallpapers){     
-      if(err) console.log(err)
-      else {
-        res.send(wallpapers.uploadPics)
-      }
-    })   
+    User.findOne({uid:Uid}).populate("uploadPics").exec(function(err, wallpapers) {
+      function A(){
+        return new Promise((resolve, reject) => {
+         if(err) console.log(err)
+         else {
+             console.log("all is"+wallpapers.uploadPics)
+             User.findOne({uid:Uid}).exec(function(err, likes){
+               if(err) console.log(err)
+               else{
+                 for(var i = 0; i <wallpapers.uploadPics.length; i++) {
+                   let isLiked=likes.likePics.some((item)=>{
+                     return item.toString() === wallpapers.uploadPics[i]._id.toString();})
+                   let isCollected=likes.collectPics.some((item)=>{
+                     return item.toString() === wallpapers.uploadPics[i]._id.toString();})
+                     wallpapers.uploadPics[i]["isLiked"]=isLiked
+                     wallpapers.uploadPics[i]["isCollected"]=isCollected
+                   console.log("is collect"+isCollected)
+                 }
+               } 
+                resolve();         
+             })        
+         }
+        }
+   
+        )}
+   
+        async function init(){
+          await A();
+          res.send(wallpapers.uploadPics)
+        }
+        init()
+      })   
 })
 
 // app.get('/search', (req, res) => {
