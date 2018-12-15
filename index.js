@@ -40,9 +40,9 @@ firebase.auth().onAuthStateChanged(User => {
 
 var Uid 
 
+
 app.get('/wallpapers/index', (req, res) => {
   Wallpaper.find({}, function(err, allWallpapers) {
-
    function A(){
      return new Promise((resolve, reject) => {
       if(err) console.log(err)
@@ -203,7 +203,7 @@ app.post('/register', (req, res) => {
   console.log(req.body)
   firebase.auth().createUserWithEmailAndPassword(req.body.email, req.body.password).then(function(userData){
     console.log('Register Success');
-    let newUser = {uid : userData.user.uid}
+    let newUser = {uid : userData.user.uid, username: req.body.username}
     User.create(newUser, (err, user) => {
         if(err) console.log(err)
         else {
@@ -240,10 +240,17 @@ app.post('/upload', (req, res) => {
     console.log("Upload Request")
     console.log(req)
     console.log(req.body.image)
+    let uname = "default";
+    User.findOne({uid: Uid}).exec().then((result) => {
+      uname = result.username;
+      console.log("sdjflsjlkfjklsdfkl: ")
+      console.log(uname);
+    });
+
     cloudinary.uploader.upload(req.body.image, (result) => {
       var image_url = result.secure_url
       console.log("aaaaaaaaaa" + image_url)
-      let newWallpaper = {_id: new mongoose.Types.ObjectId(), url : image_url}
+      let newWallpaper = {_id: new mongoose.Types.ObjectId(), url : image_url, username: uname}
       console.log(newWallpaper)
       Wallpaper.create(newWallpaper, function(err, wallpaper){
       if(err) console.log(err)

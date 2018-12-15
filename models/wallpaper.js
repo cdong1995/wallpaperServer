@@ -18,7 +18,8 @@ var wallpaperSchema = new mongoose.Schema({
     isCollected: {
         type: Boolean,
         default: false
-    }
+    },
+    username: String
 });
 
 module.exports = mongoose.model('wallpaper', wallpaperSchema);

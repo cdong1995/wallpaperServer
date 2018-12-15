@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 var UserSchema = new mongoose.Schema({
     uid: String,
+    username:String,
     likePics: [{        
         type :  mongoose.Schema.Types.ObjectId,
         ref : 'wallpaper'      
